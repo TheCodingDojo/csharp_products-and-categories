@@ -25,7 +25,7 @@ namespace ProductsAndCategories.Controllers
         }
 
         // ViewBag Approach, see Categories method / action for how to do it without a ViewBag
-        // ViewBag is used to pass this data so that the @model for the page can be a Product for creating the product
+        // ViewBag is used to pass this data so that the @model for the page can be a single Product for creating the product
         [HttpGet("/products")]
         public IActionResult Products()
         {
@@ -81,7 +81,8 @@ namespace ProductsAndCategories.Controllers
         [HttpPost("products/{productId}/relate")]
         public IActionResult RelateCategoryToProduct(int productId, CategoryProduct newCatProd)
         {
-            // because the productId and categoryId params are named the same as the properties in the CategoryProduct, they have been auto assigned for us
+            // because the productId param is named the same as the prop in CategoryProduct it is auto assigned to the newCatProd
+            // because of the asp-for on the <select> the categoryId is auto assigned to the newCatProd
 
             db.CategoryProducts.Add(newCatProd);
             db.SaveChanges();
