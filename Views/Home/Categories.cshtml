@@ -1,0 +1,43 @@
+@{
+    ViewData["Title"] = "Categories";
+}
+
+@model List<Category>
+
+<div class="container w-75">
+  <div class="row">
+
+    <div class="col-md">
+      <h2 class="text-center mb-3">New Category</h2>
+
+      @{
+        @* 
+          instantiate an empty category to provide to the <partial> for it's @model 
+          if we needed to, we could assign some values to the newCat before passing it to the <partial>
+        *@
+        Category newCat = new Category();
+      }
+      <partial name="_newCategory" model="@newCat"></partial>
+    </div>
+    <div class="col-md text-center">
+      <h2 class="mb-3">Existing Categories</h2>
+
+      @foreach (Category cat in Model)
+      {
+          @* 
+            asp-route-routeParameterName
+            routeParamterName can be named anything just like a function's parameters, but this name
+            must be used in the controller
+          *@
+          <a
+            asp-controller="Home"
+            asp-action="Category"
+            asp-route-categoryId="@cat.CategoryId"
+            class="d-block"
+          >
+            @cat.Name
+          </a>
+      }
+    </div>
+  </div>
+</div>

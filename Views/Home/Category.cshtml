@@ -1,0 +1,49 @@
+@{
+    ViewData["Title"] = "Category";
+}
+
+@* 
+  wrapper model that has multiple types of classes inside as properties instead of ViewBag
+  See product side for easier ViewBag approach
+*@
+@model CategoryPage
+
+<div class="container">
+  <h2 class="text-center mb-3">
+    @Model.Category.Name
+  </h2>
+  <hr>
+
+  <div class="row">
+
+    <div class="col-md border shadow rounded p-3 mr-1">
+      <h4 class="text-center">Related Products</h4>
+      <ul>
+        @foreach (CategoryProduct categoryProduct in Model.Category.CategoryProducts)
+        {
+            <li>- @categoryProduct.Category.Name</li>
+        }
+      </ul>
+    </div>
+
+    <div class="col-md-3 border shadow rounded p-3">
+    <form
+      asp-controller="Home"
+      asp-action="RelateProductToCategory"
+      asp-route-categoryId="@Model.Category.CategoryId"
+    >
+      @* the CategoryId prop in the @model *@
+      <select asp-for="NewRelationship.ProductId" class="form-control">
+        @foreach (Product product in Model.UnrelatedProducts)
+        {
+            <option value="@product.ProductId">
+              @product.Name
+            </option>
+        }
+      </select>
+      <button class="btn btn-primary mt-2">Add</button>
+    </form>
+    </div>
+  
+  </div>
+</div>

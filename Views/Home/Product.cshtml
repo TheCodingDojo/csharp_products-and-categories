@@ -1,0 +1,45 @@
+@{
+    ViewData["Title"] = "Product";
+}
+
+@* model for what the form is creating, ViewBag for what is being displayed *@
+@model CategoryProduct
+
+<div class="container">
+  <h2 class="text-center mb-3">
+    @ViewBag.Product.Name
+  </h2>
+  <hr>
+  <div class="row">
+
+    <div class="col-md border shadow rounded p-3 mr-1">
+      <h4 class="text-center">Related Categories</h4>
+      <ul>
+        @foreach (CategoryProduct categoryProduct in ViewBag.Product.CategoryProducts)
+        {
+            <li>- @categoryProduct.Category.Name</li>
+        }
+      </ul>
+    </div>
+
+    <div class="col-md-3 border shadow rounded p-3">
+      <form
+        asp-controller="Home"
+        asp-action="RelateCategoryToProduct"
+        asp-route-productId="@ViewBag.Product.ProductId"
+      >
+        @* the CategoryId prop in the @model *@
+        <select asp-for="CategoryId" class="form-control">
+          @foreach (Category category in ViewBag.UnrelatedCategories)
+          {
+              <option value="@category.CategoryId">
+                @category.Name
+              </option>
+          }
+        </select>
+        <button class="btn btn-primary mt-2">Add</button>
+      </form>
+    </div>
+  
+  </div>
+</div>

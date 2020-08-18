@@ -1,0 +1,17 @@
+@model Category
+
+@* <form href="categories/create" method="POST"> *@
+<form
+  asp-controller="Home"
+  asp-action="CreateCategory"
+  method="POST"
+  class="shadow p-3 mb-5 rounded"
+>
+  <div class="form-group">
+    <label asp-for="Name"></label>
+    <span asp-validation-for="Name" class="text-danger font-weight-bold">
+    </span>
+    <input class="form-control" asp-for="Name">
+  </div>
+  <button class="btn btn-success">Create</button>
+</form>
