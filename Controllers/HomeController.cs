@@ -73,10 +73,66 @@ namespace ProductsAndCategories.Controllers
             // This could be done manually with foreach loops and .Add to a list only the ones that pass an if condition
             ViewBag.UnrelatedCategories = db.Categories
                 .Include(cat => cat.CategoryProducts)
-                .Where(cat => cat.CategoryProducts.Any(catProd => catProd.ProductId == prod.ProductId) == false).ToList();
+                .Where(cat => cat.CategoryProducts
+                    .Any(catProd => catProd.ProductId == prod.ProductId) == false
+                )
+                .ToList();
 
             return View("Product");
         }
+
+        // Example of less linq and more manual loops to get unrelated categories
+        [HttpGet("/products2/{productId}")]
+        public IActionResult Product2(int productId)
+        {
+            Product prod = db.Products
+                .Include(product => product.CategoryProducts)
+                // .ThenInclude is when you need to .Include something from the thing that was previously .Included
+                // Rather than .Include another thing from the same Entity
+                .ThenInclude(catProd => catProd.Category)
+                .FirstOrDefault(p => p.ProductId == productId);
+
+            if (prod == null)
+            {
+                return RedirectToAction("Products");
+            }
+
+            ViewBag.Product = prod;
+
+            List<Category> allCategories = db.Categories
+                .Include(cat => cat.CategoryProducts)
+                .ToList();
+
+            List<Category> unrelatedCategories = new List<Category>();
+
+            foreach (Category currentCat in allCategories)
+            {
+                bool isCurrentCatAlreadyRelated = false;
+
+                // Loop over each row in the product + category many to many 'through / join' table
+                foreach (CategoryProduct cp in prod.CategoryProducts)
+                {
+                    int relatedCategoryForeignKey = cp.CategoryId;
+                    int currentCategoryPrimaryKey = currentCat.CategoryId;
+                    
+                    if (relatedCategoryForeignKey == currentCategoryPrimaryKey)
+                    {
+                        isCurrentCatAlreadyRelated = true;
+                        break;
+                    }
+                }
+
+                if (isCurrentCatAlreadyRelated == false)
+                {
+                    unrelatedCategories.Add(currentCat);
+                }
+            }
+
+            ViewBag.UnrelatedCategories = unrelatedCategories;
+
+            return View("Product");
+        }
+
 
         [HttpPost("products/{productId}/relate")]
         public IActionResult RelateCategoryToProduct(int productId, CategoryProduct newCatProd)
